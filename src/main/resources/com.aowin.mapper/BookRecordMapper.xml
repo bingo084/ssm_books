@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.mapper.BookRecordMapper">
+    <resultMap id="bookRecord" type="com.aowin.domain.BookRecord">
+        <id column="recordid" property="recordId"/>
+        <result column="lendtime" property="lendTime"/>
+        <result column="returntime" property="returnTime"/>
+        <result column="expiretime" property="expireTime"/>
+        <association property="user" javaType="user">
+            <id column="userid" property="userId"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="idcard" property="idCard"/>
+            <result column="phone" property="phone"/>
+            <result column="createtime" property="createTime"/>
+            <result column="status" property="status"/>
+            <result column="owing_money" property="owingMoney"/>
+        </association>
+        <association property="book" javaType="book">
+            <id column="bookid" property="bookId"/>
+            <result column="bookname" property="bookName"/>
+            <result column="author" property="author"/>
+            <result column="price" property="price"/>
+            <result column="publisher" property="publisher"/>
+            <result column="status" property="status"/>
+            <result column="bookcode" property="bookCode"/>
+        </association>
+    </resultMap>
+    <select id="getNotReturnedBooks" resultMap="bookRecord" parameterType="user">
+        select *
+        from book_record r,book b,user u
+        where r.userid=u.userid and r.userid=#{user.userId} and r.bookid=b.bookid and returntime is null
+    </select>
+    <select id="getNotReturnedOverdueBook" resultMap="bookRecord" parameterType="user">
+        select *
+        from book_record r,book b,user u
+        where r.userid=u.userid and r.userid=#{user.userId} and r.bookid=b.bookid and returntime is null and expiretime &lt; now()
+    </select>
+    <select id="getAllReturnedBooks" resultMap="bookRecord" parameterType="user">
+        select *
+        from book_record r,book b,user u
+        where r.userid=u.userid and r.userid=#{user.userId} and r.bookid=b.bookid and returntime is not null
+    </select>
+    <select id="getOverdueDays" parameterType="int" resultType="int">
+        select datediff(now(),expiretime)
+        from book_record
+        where recordid=#{recordId}
+    </select>
+    <insert id="addRecord">
+        insert
+        into book_record(userid,bookid,lendtime,expiretime)
+        values(#{user.userId},#{bookId},now(),date_add(now(), interval 30 day))
+    </insert>
+    <update id="updateReturnBookRecord" parameterType="int">
+        update book_record
+        set returntime = now()
+        where recordid = #{recordId}
+    </update>
+</mapper>

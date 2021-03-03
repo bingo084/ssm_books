@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.mapper.BookMapper">
+    <resultMap id="book" type="com.aowin.domain.Book">
+        <id column="bookid" property="bookId"/>
+        <result column="bookname" property="bookName"/>
+        <result column="author" property="author"/>
+        <result column="price" property="price"/>
+        <result column="publisher" property="publisher"/>
+        <result column="status" property="status"/>
+        <result column="bookcode" property="bookCode"/>
+    </resultMap>
+    <select id="getAllNotLentBooks" resultType="book">
+        select *
+        from book
+        where status = 1
+    </select>
+    <update id="borrowBookById" parameterType="int">
+        update book
+        set status= -1
+        where bookid = #{id}
+    </update>
+    <update id="returnBookById" parameterType="int">
+        update book
+        set status = 1
+        where bookid = #{id}
+    </update>
+</mapper>

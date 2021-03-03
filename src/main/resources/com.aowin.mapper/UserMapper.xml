@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.mapper.UserMapper">
+    <resultMap id="user" type="com.aowin.domain.User">
+        <id column="userid" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="idcard" property="idCard"/>
+        <result column="phone" property="phone"/>
+        <result column="createtime" property="createTime"/>
+        <result column="status" property="status"/>
+        <result column="owing_money" property="owingMoney"/>
+    </resultMap>
+    <select id="getUser" parameterType="user" resultMap="user">
+        select *
+        from user
+        where userid=#{user.userId}
+    </select>
+    <select id="getLoginUser" parameterType="user" resultMap="user">
+        select *
+        from user
+        where username=#{user.username} and password=#{user.password}
+    </select>
+    <update id="updateOwingMoney">
+        update user
+        set owing_money = ${days}*0.2
+        where userid = #{userId}
+    </update>
+    <update id="makeUpArrears" parameterType="user">
+        update user
+        set owing_money = 0
+        where userid = #{user.userId}
+    </update>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.mapper.AccountRecordMapper">
+    <insert id="addAccountRecord">
+        insert
+        into account_record(userid,money,changetime,type)
+        values (#{userId},${days}*0.2,now(),#{type})
+    </insert>
+    <insert id="makeUpArrears" parameterType="user">
+        insert
+        into account_record(userid,money,changetime,type)
+        values (#{user.userId},${user.owingMoney},now(),2)
+    </insert>
+</mapper>
